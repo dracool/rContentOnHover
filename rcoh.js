@@ -4,7 +4,7 @@
 // @version      1.0
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
-// @downloadURL  https://github.com/dracool/rContentOnHover/rcoh.js
+// @downloadURL  https://github.com/dracool/rContentOnHover/blob/master/rcoh.js
 // @include      /https*:\/\/\w+\.reddit\.com\/r\/[^\/]+(?:\/(?:\?.*)*)*$/
 // @grant        GM_xmlhttpRequest
 // @require      https://code.jquery.com/jquery-3.1.0.min.js
