@@ -1,116 +1,54 @@
 // ==UserScript==
 // @name         Reddit Content on Hover
 // @namespace    https://github.com/dracool/rContentOnHover
-// @version      1.1
+// @version      1.2
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/blob/master/rcoh.user.js
 // @include      /https?:\/\/\w+\.reddit\.com\/r\/[^\/]+(?:\/(?:\?.*)*)*$/
 // @grant        GM_xmlhttpRequest
 // @require      https://code.jquery.com/jquery-3.1.0.min.js
+// @connect      gfycat.com
 // ==/UserScript==
 
 (function(){
   "use strict";
 
-  //Add Cross Origin support to jquery
-  (function($, dataType, undefined){
-    //transport function to be used by jquery
-    var xssTransport =  function(_jQueryObj, dataType){
-      return (function(options, originalOptions, jqXHR){
-        if(GM_xmlhttpRequest !== undefined){
-          var extend = (_jQueryObj || $).extend,
-              mergedOptions = extend(true, {}, options, originalOptions),
-              // Translate jQuery jqXHR options to GM options (there are some subtle differences)
-              optionMap = {
-                context: 'context',
-                overrideMimeType: 'overrideMimeType',
-                timeout: 'timeout',
-                username: 'user', // "username" is "user " when using GM_xmlhttpRequest
-                password: 'password',
-                onreadystatechange: 'onreadystatechange', // GM Specific option
-                ontimeout: 'ontimeout', // GM Specific option
-                onprogress: 'onprogress', // GM Specific option
-                binary: 'binary' // GM Specific option
-              };
-          return {
-            send: function(headers, callback){
-              var origType = (originalOptions.dataType || '').toLowerCase(),
-                  gm_request_options = {
-                    method: options.type || "GET",
-                    url: options.url,
-                    // Shallow clone of data from both options
-                    data: extend({}, options.data || {}, originalOptions.data || {}),
-                    headers: headers,
-                    onload: function(response){
-                      // Done response
-                      var dResponse = {text: response.responseText},
-                          rContentType = '',
-                          key;
-                      try{
-                        // Try to extract the content type from the response headers
-                        rContentType = (/Content-Type:\s*([^\s]+)/i.exec(response.responseHeaders))[1];
-                      }catch(e){}
-                      // HTML
-                      if(origType === 'html' || /text\/html/i.test(rContentType)) {
-                        dResponse.html = response.responseText;
-
-                        // JSON
-                      } else if(origType === 'json' || (origType !== 'text' && /\/json/i.test(rContentType))){
-                        try{
-                          dResponse.json = $.parseJSON(response.responseText);
-                        }catch(e){}
-                        // XML
-                      } else if(origType == 'xml' || (origType !== 'text' && /\/xml/i.test(rContentType))){
-                        if(response.responseXML){
-                          // Use XML response if it exists
-                          dResponse.xml = response.responseXML;
-                        } else {
-                          // Use DOM parser if it doesn't exist
-                          try{dResponse.xml = new DOMParser().parseFromString(response.responseText, "text/xml");}catch(e){}
-                        }
-                      }
-                      callback(200, "success", dResponse, response.responseHeaders);
-                    },
-                    onerror: function(response){
-                      callback(404, "error", {text: response.responseText}, response.responseHeaders);
-                    }
-                  };
-              // Map options
-              for(var key in optionMap){
-                if(PROPDEFINED(mergedOptions,key)){
-                  gm_request_options[optionMap[key]] = mergedOptions[key];
-                }
-              }
-              // If async option if false, enable synchronous option
-              if(mergedOptions.async === false)
-                gm_request_options.synchronous = true;
-              // Send request
-              GM_xmlhttpRequest(gm_request_options);
-            },
-            abort: function() {
-              // No abort support
-            }
-          };
-        }
-      });
-    };
-    //don't add without GM support
-    if(undefined === typeof GM_xmlhttpRequest || !$)
-      return;
-    //don't enable twice
-    if($.next_css)
-      return;
-    $.ajaxTransport(
-      dataType || "* text html xml json",
-      xssTransport($, dataType)
-    );
-    $.extend({next_xss: true});
-  })($);
+  var GMRequest = {
+    raw: function(options) {
+      if(!options) return;
+      let deferred = new $.Deferred();
+      let onload = options.onload;
+      let onerror = options.onerror;
+      options.onload = function(response) {
+        if(onload) onload(response);
+        deferred.resolve(response);
+      };
+      options.onerror = function(response) {
+        if(onerror) onerror(response);
+        deferred.reject(response);
+      };
+      GM_xmlhttpRequest(options);
+      return deferred.promise();
+    },
+    get: function(url, options) {
+      if(!options) {
+        options = {};
+      }
+      if(typeof url === "object") {
+        options = url;
+      } else {
+        options.url = url;
+      }
+      options.method = "GET";
+      return GMRequest.raw(options);
+    }
+  };
 
   function manipulateDomForUrl(url, container) {
     var map = [
       //reddit links are not prefixed with a domain and start with a /
+      //also handles media preview images
       {k: "/", v: function(u,c) {
         return $.get(u)
           .done(function(data) {
@@ -140,7 +78,7 @@
           }
         });
       }},
-      //all basic image types are simply displayed in an img tag
+      //basic image types are simply displayed in an img tag
       {k: /.+\.(?:png|jpg|gif)$/, v: function(u,c){
         c.css("padding", "0");
         let item = $("<img></img>").css({
@@ -153,21 +91,25 @@
         item.appendTo(c);
         return true;
       }},
+      //gfycat support for embedd video playback
       {k: /https?:\/\/gfycat\.com\/*/, v: function(u,c) {
-        //https://gfycat.com/ifr/<id>
-        let m = u.match(/com\/(.+)/);
-        u = "https://gfycat.com/ifr/" + m[0].substring(4);
-        //alert(u);
-        let item = $("<iframe></iframe>").attr("src", u);
-        item.css({
-          display: "block",
-          width: "auto",
-          height: "auto",
-          "max-height": "296px"
+        //use special cross-origion get request to deal with gfycats origin access restriction
+        return GMRequest.get(u,{
+          headers: {
+            origin: "gfycat.com",
+            referer: "gfycat.com"
+        }}).done(function(d){
+          let item = $("<div/>").html(d.responseText);
+          item = item.find("video");
+          item.css({
+            display: "block",
+            width: "auto",
+            height: "auto",
+            "max-height": "296px"
+          });
+          c.css("padding", "0");
+          item.appendTo(c);
         });
-        c.css("padding", "0");
-        item.appendTo(c);
-        return true;
       }}
     ];
 
