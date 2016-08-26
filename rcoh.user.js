@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Reddit Content on Hover
 // @namespace    https://github.com/dracool/rContentOnHover
-// @version      1.0
+// @version      1.1
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/blob/master/rcoh.user.js
-// @include      /https*:\/\/\w+\.reddit\.com\/r\/[^\/]+(?:\/(?:\?.*)*)*$/
+// @include      /https?:\/\/\w+\.reddit\.com\/r\/[^\/]+(?:\/(?:\?.*)*)*$/
 // @grant        GM_xmlhttpRequest
 // @require      https://code.jquery.com/jquery-3.1.0.min.js
 // ==/UserScript==
@@ -152,6 +152,22 @@
         .attr("src", u);
         item.appendTo(c);
         return true;
+      }},
+      {k: /https?:\/\/gfycat\.com\/*/, v: function(u,c) {
+        //https://gfycat.com/ifr/<id>
+        let m = u.match(/com\/(.+)/);
+        u = "https://gfycat.com/ifr/" + m[0].substring(4);
+        //alert(u);
+        let item = $("<iframe></iframe>").attr("src", u);
+        item.css({
+          display: "block",
+          width: "auto",
+          height: "auto",
+          "max-height": "296px"
+        });
+        c.css("padding", "0");
+        item.appendTo(c);
+        return true;
       }}
     ];
 
@@ -244,7 +260,7 @@
 
   $(document).ready(function(){
     //DEBUGGING ONLY: get rid of reddits pesky error handling
-    window.onerror = undefined;
+    //window.onerror = undefined;
     $("div.thing").find("a.title, a.thumbnail").hover(onHoverStart, onHoverEnd);
   });
 
