@@ -126,12 +126,13 @@
 					}).done(function (d) {
 						let item = $("<div/>").html(d.responseText)
 						item = item.find("video")
-						item.css({
-							display: "block",
-							width: "auto",
-							height: "auto",
-							"max-height": "296px"
-						})
+						  .attr("controls","false")
+						  .css({
+								display: "block",
+								width: "auto",
+								height: "auto",
+								"max-height": "296px"
+							})
 						c.css("padding", "0")
 						item.appendTo(c)
 					})

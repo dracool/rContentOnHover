@@ -127,8 +127,9 @@
                         }
                     }).done(function (d) {
                         let item = $("<div/>").html(d.responseText);
-                        item = item.find("video");
-                        item.css({
+                        item = item.find("video")
+                            .attr("controls", "false")
+                            .css({
                             display: "block",
                             width: "auto",
                             height: "auto",
