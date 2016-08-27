@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Content on Hover
 // @namespace    https://github.com/dracool/rContentOnHover
-// @version      1.6
+// @version      1.7
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/raw/master/build/rcoh.user.js
@@ -128,7 +128,7 @@
                     }).done(function (d) {
                         let item = $("<div/>").html(d.responseText);
                         item = item.find("video")
-                            .attr("controls", "false")
+                            .removeAttr("controls")
                             .css({
                             display: "block",
                             width: "auto",
