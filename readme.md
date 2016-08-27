@@ -11,10 +11,24 @@ Installing
 
 If you do not have the Greasemonkey / Tampermonkey addon you can get them here:
 
-| Browser  | Addon |
-| ------------- | ------------- |
-| Chrome  | [Tampermonkey](https://chrome.google.com/webstore/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo)  |
-| Firefox  | [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)  |
+<table>
+    <thead>
+        <th>Browser
+        <th colspan="2">Addon
+    <tr>
+        <td> Chrome
+        <td colspan="2"><a href="https://chrome.google.com/webstore/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo">Tampermonkey</a>
+    <tr>
+        <td> Firefox
+        <td><a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/">Greasemonkey</a>
+        <td><a href="https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/">Tampermonkey Beta</a>
+    <tr>
+        <td> Opera
+        <td colspan="2"> <a href="https://addons.opera.com/en/extensions/details/tampermonkey-beta/">Tampermonkey</a>
+    <tr>
+        <td> Safari
+        <td colspan="2"> <a href="https://safari.tampermonkey.net/tampermonkey.safariextz">Tampermonkey</a>
+</table>
 
 You can now install this script by clicking [this link](https://github.com/dracool/rContentOnHover/raw/master/build/rcoh.user.js).
 This script has support for updates and will be updated occasionally with new functionality and fixes.
