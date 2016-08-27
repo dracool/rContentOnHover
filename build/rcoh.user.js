@@ -66,12 +66,13 @@
             return GMRequest.raw(options);
         }
     }
-    ;
     function manipulateDomForUrl(url, container) {
         var map = [
             //reddit links are not prefixed with a domain and start with a /
             //also handles media preview images
-            { k: "/", v: (u, c) => {
+            {
+                k: "/",
+                v: (u, c) => {
                     return $.get(u)
                         .done(function (data) {
                         c.addClass("md-container usertext-body").css({
@@ -98,9 +99,11 @@
                             return;
                         }
                     });
-                } },
-            //basic image types are simply displayed in an img tag
-            { k: /.+\.(?:png|jpg|gif)$/, v: (u, c) => {
+                }
+            },
+            {
+                k: /.+\.(?:png|jpg|gif)$/,
+                v: (u, c) => {
                     c.css("padding", "0");
                     let item = $("<img></img>").css({
                         display: "block",
@@ -111,15 +114,18 @@
                         .attr("src", u);
                     item.appendTo(c);
                     return true;
-                } },
-            //gfycat support for embedd video playback
-            { k: /https?:\/\/gfycat\.com\/*/, v: (u, c) => {
+                }
+            },
+            {
+                k: /https?:\/\/gfycat\.com\/*/,
+                v: (u, c) => {
                     //use special cross-origion get request to deal with gfycats origin access restriction
                     return GMRequest.get(u, {
                         headers: {
                             origin: "gfycat.com",
                             referer: "gfycat.com"
-                        } }).done(function (d) {
+                        }
+                    }).done(function (d) {
                         let item = $("<div/>").html(d.responseText);
                         item = item.find("video");
                         item.css({
@@ -131,7 +137,26 @@
                         c.css("padding", "0");
                         item.appendTo(c);
                     });
-                } }
+                }
+            },
+            {
+                k: "https://fat.gfycat.com/",
+                v: (u, c) => {
+                    let item = $("<video/>")
+                        .attr("src", u)
+                        .attr("autoplay", "")
+                        .attr("loop", "")
+                        .css({
+                        display: "block",
+                        width: "auto",
+                        height: "auto",
+                        "max-height": "296px"
+                    });
+                    c.css({ padding: "0" });
+                    item.appendTo(c);
+                    return true;
+                }
+            }
         ];
         let promise = false;
         for (let el of map) {
@@ -200,7 +225,7 @@
         }
     }
     function onHoverEnd(event) {
-        //return; //DEBUG ONLY: let's me use the inspector on tooltip dom
+        //return //DEBUG ONLY: let's me use the inspector on tooltip dom
         let url = $(event.target).attr("href");
         if (loaded[url]) {
             $(loaded[url].dom).fadeOut();
