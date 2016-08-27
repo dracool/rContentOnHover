@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Content on Hover
 // @namespace    https://github.com/dracool/rContentOnHover
-// @version      1.3
+// @version      1.4
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/blob/master/build/rcoh.user.js
@@ -10,7 +10,7 @@
 // @require      https://code.jquery.com/jquery-3.1.0.min.js
 // @connect      gfycat.com
 // ==/UserScript==
-(function(undefined?){
+(function(undefined? : any){
 	"use strict";
 
 	class GMRequest {
@@ -183,7 +183,7 @@
 		}).html('<span class="rContentOnHoverLoading">Loading...</span>').hide();
 	}
 
-	function onHoverStart(event) {
+	function onHoverStart(event : JQueryEventObject) {
 		let url = $(event.target).attr("href");
 		if(loaded[url]){
 			$(loaded[url].dom).fadeIn()
@@ -203,7 +203,7 @@
 		}
 	}
 
-	function onHoverEnd(event) {
+	function onHoverEnd(event : JQueryEventObject) {
 		//return; //DEBUG ONLY: let's me use the inspector on tooltip dom
 		let url = $(event.target).attr("href")
 		if(loaded[url]) {
