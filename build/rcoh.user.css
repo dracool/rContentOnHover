@@ -1,4 +1,4 @@
-/*.com-github-dracool-rContentOnHover-TT:before {
+.com-github-dracool-rContentOnHover-TT:before {
 	content: "";
   position: absolute;
   top: 0;
@@ -11,7 +11,7 @@
 	border-bottom: none;
 	border-right: none;
 	transform: rotate(45deg);
-}*/
+}
 
 .com-github-dracool-rContentOnHover-TT {
 	position: absolute;
