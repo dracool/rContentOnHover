@@ -3,6 +3,8 @@ Reddit Content on Hover
 Description
 --
 Reddit Content on Hover is a Greasemonkey/Tampermonkey script, that adds a preview of (some) images, videos or text posts to subreddits overviews.
+
+![Preview](http://i.imgur.com/AlZ1A1t.png)
 ___
 Installing
 --
