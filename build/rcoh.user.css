@@ -1,8 +1,9 @@
 .com-github-dracool-rContentOnHover-TT-loaded:before {
 	content: "";
 	position: absolute;
+	z-index: -1;
 	top: -12px;
-	left: 40px;
+	left: 80px;
 	width: 20px;
 	height: 20px;
 	background: inherit;
