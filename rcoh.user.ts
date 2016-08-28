@@ -6,10 +6,16 @@
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/raw/master/build/rcoh.user.js
 // @include      /https?:\/\/\w+\.reddit\.com\/r\/[^\/]+(?:\/(?:\?.*)*)*$/
+// @grant        GM_getResourceText
 // @grant        GM_xmlhttpRequest
-// @require      https://code.jquery.com/jquery-3.1.0.min.js
+// @grant        GM_addStyle
 // @connect      gfycat.com
+// @require      https://code.jquery.com/jquery-3.1.0.min.js
+// @resource     TTStyle https://github.com/dracool/rContentOnHover/raw/master/build/rcoh.user.css
 // ==/UserScript==
+//add style for preview box
+GM_addStyle(GM_getResourceText("TTStyle"));
+
 (function (undefined?: any) {
 	"use strict"
 
@@ -63,6 +69,22 @@
 		}
 	}
 
+	function prepareForImageContent(container : JQuery) : JQuery {
+		return container.css({
+			padding: "0",
+			background: "black"
+		})
+	}
+
+	function makeResizing(element : JQuery) : JQuery {
+		return element.css({
+			display: "block",
+			width: "auto",
+			height: "auto",
+			"max-height": "296px"
+		})
+	}
+
 	function manipulateDomForUrl(url: string, container: JQuery) {
 		var map: [{ k: string | RegExp, v: (u: string, c: JQuery) => JQueryPromise<any> | boolean }] = [
 			//reddit links are not prefixed with a domain and start with a /
@@ -72,27 +94,29 @@
 				v: (u, c) => {
 					return $.get(u)
 						.done(function (data) {
-							c.addClass("md-container usertext-body").css({
-								background: "#fafafa"
-							})
+							c.addClass("md-container usertext-body")
+								.css({
+									background: "#fafafa"
+								})
 
 							let item = $("<div/>").html(data)
 							item = item.find("#siteTable")
 							let temp = $(item).find("div.usertext-body > div")
 							if (temp.length > 0) {
-								temp.css("border", "none")
+								temp.css({
+									"overflow-y": "hidden",
+									"max-height": "296px"
+								})
+								if(temp[0].scrollHeight > temp[0].clientHeight) {
+									c.addClass("com-github-dracool-rContentOnHover-TT-overflown")
+								}
 								temp.appendTo(c)
 								return
 							}
 							temp = $(item).find("div.media-preview-content img.preview")
 							if (temp.length > 0) {
-								c.css("padding", "0")
-								temp.css({
-									display: "block",
-									width: "auto",
-									height: "auto",
-									"max-height": "296px"
-								})
+								prepareForImageContent(c)
+								temp = makeResizing(temp)
 								temp.appendTo(c)
 								return
 							}
@@ -102,13 +126,8 @@
 			{//basic domain independant image support
 				k: /.+\.(?:png|jpg|gif)$/,
 				v: (u, c) => {
-					c.css("padding", "0")
-					let item = $("<img></img>").css({
-						display: "block",
-						width: "auto",
-						height: "auto",
-						"max-height": "296px"
-					})
+					prepareForImageContent(c)
+					let item = makeResizing($("<img></img>"))
 						.attr("src", u)
 					item.appendTo(c)
 					return true
@@ -124,16 +143,11 @@
 							referer: "gfycat.com"
 						}
 					}).done(function (d) {
+						prepareForImageContent(c)
 						let item = $("<div/>").html(d.responseText)
-						item = item.find("video")
+						item = makeResizing(item.find("video"))
 						  .removeAttr("controls")
-						  .css({
-								display: "block",
-								width: "auto",
-								height: "auto",
-								"max-height": "296px"
-							})
-						c.css("padding", "0")
+						  
 						item.appendTo(c)
 					})
 				}
@@ -141,16 +155,10 @@
 			{//gfycat support for direct video links
 				k: "https://fat.gfycat.com/",
 				v: (u, c) => {
-					let item = $("<video/>")
+					let item = makeResizing($("<video/>"))
 						.attr("src", u)
 						.attr("autoplay", "")
 						.attr("loop", "")
-						.css({
-							display: "block",
-							width: "auto",
-							height: "auto",
-							"max-height": "296px"
-						})
 					c.css({ padding: "0" })
 					item.appendTo(c)
 					return true
@@ -175,7 +183,10 @@
 			}
 		}
 
-		let finish = () => container.find("span.rContentOnHoverLoading").remove()
+		let finish = () =>{
+			container.find("span.rContentOnHoverLoading").remove()
+			container.addClass("com-github-dracool-rContentOnHover-TT-loaded")
+		}
 		if (typeof promise !== "boolean") {
 			promise.done(finish)
 			promise.fail(function (xhr, textStatus, errorThrown) {
@@ -195,19 +206,10 @@
 	} = {}
 
 	function createTTContainer() {
-		return $("<div/>").css({
-			position: "absolute",
-			padding: "5px",
-			float: "left",
-			background: "#ededed",
-			color: "black",
-			border: "2px solid black",
-			"max-height": "300px",
-			"border-radius": "10px",
-			"margin-top": "10px",
-			"z-index": "5",
-			"overflow-y": "hidden"
-		}).html('<span class="rContentOnHoverLoading">Loading...</span>').hide()
+		return $("<div/>")
+			.addClass("com-github-dracool-rContentOnHover-TT")
+			.html('<span class="rContentOnHoverLoading">Loading...</span>')
+			.hide()
 	}
 
 	function onHoverStart(event: JQueryEventObject) {
@@ -217,7 +219,7 @@
 			clearTimeout(loaded[url].to)
 			loaded[url].to = null
 		} else {
-			let domEl = createTTContainer().insertAfter(event.target)
+			let domEl = createTTContainer().insertAfter($(event.target).parents("div.thing"))
 			let res = manipulateDomForUrl(url, domEl)
 			if (res) {
 				loaded[url] = {
