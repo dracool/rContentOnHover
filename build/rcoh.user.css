@@ -1,9 +1,9 @@
-.com-github-dracool-rContentOnHover-TT-loaded:before {
+.com-github-dracool-rcoh-TT-loaded:before {
 	content: "";
 	position: absolute;
 	z-index: -1;
 	top: -12px;
-	left: 80px;
+	left: 10%;
 	width: 20px;
 	height: 20px;
 	background: inherit;
@@ -14,7 +14,7 @@
 	transform: rotate(45deg);
 }
 
-.com-github-dracool-rContentOnHover-TT-overflown:after {
+.com-github-dracool-rcoh-TT-overflown:after {
 	content: "";
 	position: absolute;
 	bottom: 3px;
@@ -26,7 +26,7 @@
 	border: none;
 }
 
-.com-github-dracool-rContentOnHover-TT {
+.com-github-dracool-rcoh-TT {
 	position: absolute;
 	left: 55px;
 	padding: 5px;
@@ -38,4 +38,15 @@
 	border-radius: 10px;
 	margin-top: -20px;
 	z-index: 100;
+}
+
+.com-github-dracool-rcoh-TT-md {
+  color: #222222;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 1.0769230769230769em;
+  font-weight: 400;
+  max-width: 60em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }

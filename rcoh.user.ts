@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Content on Hover
 // @namespace    https://github.com/dracool/rContentOnHover
-// @version      1.9
+// @version      1.10
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/raw/master/build/rcoh.user.js
@@ -101,15 +101,19 @@ GM_addStyle(GM_getResourceText("TTStyle"));
 
 							let item = $("<div/>").html(data)
 							item = item.find("#siteTable")
-							let temp = $(item).find("div.usertext-body > div")
+							let temp = $(item).find("div.usertext-body > div.md")
 							if (temp.length > 0) {
-								temp.css({
-									"overflow-y": "hidden",
-									"max-height": "296px"
-								})
-								temp.appendTo(c)
+								temp
+									.removeClass("md")
+									.addClass(".com-github-dracool-rcoh-TT-md")
+									.css({
+										"overflow-y": "hidden",
+										"max-height": "296px",
+										color: "black"
+									})
+									.appendTo(c)
 								if(temp[0].scrollHeight > temp[0].clientHeight) {
-									c.addClass("com-github-dracool-rContentOnHover-TT-overflown")
+									c.addClass("com-github-dracool-rcoh-TT-overflown")
 								}
 								return
 							}
@@ -184,8 +188,8 @@ GM_addStyle(GM_getResourceText("TTStyle"));
 		}
 
 		let finish = () =>{
-			container.find("span.rContentOnHoverLoading").remove()
-			container.addClass("com-github-dracool-rContentOnHover-TT-loaded")
+			container.find("span.com-github-dracool-rcoh-TT-loading").remove()
+			container.addClass("com-github-dracool-rcoh-TT-loaded")
 		}
 		if (typeof promise !== "boolean") {
 			promise.done(finish)
@@ -207,8 +211,8 @@ GM_addStyle(GM_getResourceText("TTStyle"));
 
 	function createTTContainer() {
 		return $("<div/>")
-			.addClass("com-github-dracool-rContentOnHover-TT")
-			.html('<span class="rContentOnHoverLoading">Loading...</span>')
+			.addClass("com-github-dracool-rcoh-TT")
+			.html('<span class="com-github-dracool-rcoh-TT-loading">Loading...</span>')
 			.hide()
 	}
 
