@@ -41,12 +41,5 @@
 }
 
 .com-github-dracool-rcoh-TT-md {
-  color: #222222;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  font-size: 1.0769230769230769em;
-  font-weight: 400;
-  max-width: 60em;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  color: #222222 !important;
 }

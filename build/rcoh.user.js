@@ -103,7 +103,6 @@ GM_addStyle(GM_getResourceText("TTStyle"));
                         let temp = $(item).find("div.usertext-body > div.md");
                         if (temp.length > 0) {
                             temp
-                                .removeClass("md")
                                 .addClass(".com-github-dracool-rcoh-TT-md")
                                 .css({
                                 "overflow-y": "hidden",
