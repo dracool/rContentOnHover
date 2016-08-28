@@ -106,10 +106,10 @@ GM_addStyle(GM_getResourceText("TTStyle"));
                                 "overflow-y": "hidden",
                                 "max-height": "296px"
                             });
+                            temp.appendTo(c);
                             if (temp[0].scrollHeight > temp[0].clientHeight) {
                                 c.addClass("com-github-dracool-rContentOnHover-TT-overflown");
                             }
-                            temp.appendTo(c);
                             return;
                         }
                         temp = $(item).find("div.media-preview-content img.preview");
