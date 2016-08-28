@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Reddit Content on Hover
 // @namespace    https://github.com/dracool/rContentOnHover
-// @version      1.10
+// @version      1.11
 // @description  Adds in-page popup display of (some) posts content when hovering over the title
 // @author       NeXtDracool
 // @downloadURL  https://github.com/dracool/rContentOnHover/raw/master/build/rcoh.user.js
